@@ -9,7 +9,7 @@ export default function Products() {
 
   const products = [
     {
-      name: "Classic White T-Shirt",
+      name: "Formal T-Shirt",
       category: "T-Shirts",
       brand: "Nike",
       price: "25",
@@ -18,16 +18,16 @@ export default function Products() {
       status: "Active"
     },
     {
-      name: "Blue Denim Jeans",
-      category: "Jeans",
+      name: "Formal Pants",
+      category: "Pants",
       brand: "Levis",
       price: "60",
       discount: "15",
       stock: 80,
-      status: "Active"
+      status: "InActive"
     },
     {
-      name: "Summer Dress",
+      name: "Summer Suits",
       category: "Dresses",
       brand: "Zara",
       price: "45",
@@ -36,8 +36,8 @@ export default function Products() {
       status: "Low Stock"
     },
     {
-      name: "Leather Jacket",
-      category: "Jackets",
+      name: "Wood Land",
+      category: "Slippers",
       brand: "Puma",
       price: "120",
       discount: "20",

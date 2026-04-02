@@ -96,7 +96,7 @@ export default function Analytics() {
         {/* Revenue Line */}
         <div className="bg-white p-4 rounded-xl shadow">
           <h2 className="font-semibold mb-4">Revenue Trend</h2>
-          <LineChart width={550} height={300} data={revenueData}>
+          <LineChart width={350} height={300} data={revenueData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
@@ -108,7 +108,7 @@ export default function Analytics() {
         {/* Orders Bar */}
         <div className="bg-white p-4 rounded-xl shadow">
           <h2 className="font-semibold mb-4">Orders Trend</h2>
-          <BarChart width={550} height={300} data={ordersData}>
+          <BarChart width={350} height={300} data={ordersData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
@@ -146,7 +146,7 @@ export default function Analytics() {
           <div className="space-y-4">
             <div className="flex justify-between border-b pb-2">
               <div>
-                <p>Classic White T-Shirt</p>
+                <p>Formal T-Shirt</p>
                 <span className="text-sm text-gray-500">5678 units sold</span>
               </div>
               <p>$1000</p>
@@ -154,7 +154,7 @@ export default function Analytics() {
 
             <div className="flex justify-between border-b pb-2">
               <div>
-                <p>Denim Jeans</p>
+                <p>Formal Pants</p>
                 <span className="text-sm text-gray-500">520 units sold</span>
               </div>
               <p>$4000</p>
@@ -162,7 +162,7 @@ export default function Analytics() {
 
             <div className="flex justify-between border-b pb-2">
               <div>
-                <p>Summer Dress</p>
+                <p>Summer Suits</p>
                 <span className="text-sm text-gray-500">400 units sold</span>
               </div>
               <p>$3200</p>
@@ -170,7 +170,7 @@ export default function Analytics() {
 
             <div className="flex justify-between border-b pb-2">
               <div>
-                <p>Leather Jacket</p>
+                <p>Lehanga</p>
                 <span className="text-sm text-gray-500">250 units sold</span>
               </div>
               <p>$2500</p>
@@ -178,7 +178,7 @@ export default function Analytics() {
 
             <div className="flex justify-between">
               <div>
-                <p>Sneakers</p>
+                <p>Wood Land</p>
                 <span className="text-sm text-gray-500">300 units sold</span>
               </div>
               <p>$5000</p>

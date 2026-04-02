@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { HiPencil, HiTrash, HiUserAdd } from "react-icons/hi";
+import AddUserModal from "../../components/AddUserModal";
 
 export default function Users() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
-  const users = [
+  // ✅ USERS STATE (IMPORTANT)
+  const [users, setUsers] = useState([
     {
       name: "Admin User",
       email: "admin@store.com",
@@ -38,21 +41,35 @@ export default function Users() {
       joined: "2023-06-10",
       lastLogin: "2024-01-20",
     },
-  ];
+  ]);
 
-  // 🔍 Filter logic
+  // 🔍 Filter
   const filteredUsers = users.filter(
     (u) =>
       u.name.toLowerCase().includes(search.toLowerCase()) &&
       (roleFilter === "" || u.role === roleFilter)
   );
 
-  // 🎯 Stats
+  // 📊 Stats
   const total = users.length;
   const admins = users.filter((u) => u.role === "admin").length;
   const subadmins = users.filter((u) => u.role === "subadmin").length;
   const agents = users.filter((u) => u.role === "agent").length;
   const active = users.filter((u) => u.status === "active").length;
+
+  // ✅ ADD USER FUNCTION
+  const handleAddUser = (newUser) => {
+    const user = {
+      name: `${newUser.firstName} ${newUser.lastName}`,
+      email: newUser.email,
+      role: "agent", // default role
+      status: "active",
+      joined: new Date().toISOString().split("T")[0],
+      lastLogin: "-",
+    };
+
+    setUsers([user, ...users]); // add new user to top
+  };
 
   return (
     <div>
@@ -65,13 +82,17 @@ export default function Users() {
           </p>
         </div>
 
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        {/* ✅ OPEN MODAL */}
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
+        >
           <HiUserAdd />
           Add User
         </button>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats */}
       <div className="grid grid-cols-5 gap-4 mb-6">
         <div className="bg-white p-4 rounded-xl shadow">
           <p>Total Users</p>
@@ -99,7 +120,7 @@ export default function Users() {
         </div>
       </div>
 
-      {/* Search + Filter */}
+      {/* Search */}
       <div className="flex gap-4 mb-4">
         <input
           type="text"
@@ -141,40 +162,19 @@ export default function Users() {
             {filteredUsers.map((u, i) => (
               <tr key={i} className="border-t hover:bg-gray-50">
 
-                {/* User */}
                 <td className="p-3">
                   <p className="font-medium">{u.name}</p>
                   <p className="text-gray-500 text-sm">{u.email}</p>
                 </td>
 
-                {/* Role */}
                 <td>
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm 
-                    ${
-                      u.role === "admin"
-                        ? "bg-red-100 text-red-600"
-                        : u.role === "subadmin"
-                        ? "bg-purple-100 text-purple-600"
-                        : u.role === "agent"
-                        ? "bg-blue-100 text-blue-600"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
+                  <span className="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-600">
                     {u.role}
                   </span>
                 </td>
 
-                {/* Status */}
                 <td>
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm 
-                    ${
-                      u.status === "active"
-                        ? "bg-green-100 text-green-600"
-                        : "bg-gray-200 text-gray-600"
-                    }`}
-                  >
+                  <span className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-600">
                     {u.status}
                   </span>
                 </td>
@@ -182,7 +182,6 @@ export default function Users() {
                 <td>{u.joined}</td>
                 <td>{u.lastLogin}</td>
 
-                {/* Actions */}
                 <td className="flex gap-3 mt-2">
                   <HiPencil className="text-blue-500 cursor-pointer" />
                   <HiTrash className="text-red-500 cursor-pointer" />
@@ -194,8 +193,13 @@ export default function Users() {
         </table>
       </div>
 
-      {/* 🔥 Role Access Info */}
-
+      {/* ✅ MODAL */}
+      {showModal && (
+        <AddUserModal
+          onClose={() => setShowModal(false)}
+          onAddUser={handleAddUser}   // 🔥 important
+        />
+      )}
     </div>
   );
 }
