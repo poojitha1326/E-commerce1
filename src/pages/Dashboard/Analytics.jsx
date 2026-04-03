@@ -11,7 +11,7 @@ import {
   HiUsers
 } from "react-icons/hi";
 
-// 📊 Dummy Data
+// Dummy Data
 const revenueData = [
   { month: "Jan", revenue: 21000 },
   { month: "Feb", revenue: 25000 },
@@ -41,62 +41,67 @@ const COLORS = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b"];
 
 export default function Analytics() {
   return (
-    <div>
+    <div className="p-4 md:p-6">
 
       {/* Header */}
-      <h1 className="text-3xl font-bold mb-2">Analytics Dashboard</h1>
-      <p className="text-gray-500 mb-6">
+      <h1 className="text-xl md:text-3xl font-bold mb-2">
+        Analytics Dashboard
+      </h1>
+
+      <p className="text-gray-500 text-sm md:text-base mb-6">
         Overview of your eCommerce performance
       </p>
 
-      {/* 🔹 Cards */}
-      <div className="grid grid-cols-4 gap-6 mb-6">
+      {/* Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
 
-        <div className="bg-white p-4 rounded-xl shadow flex justify-between">
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow flex justify-between items-center">
           <div>
-            <p>Total Revenue</p>
-            <h2 className="text-xl font-bold">$12000</h2>
-            <p className="text-green-500">+7.2%</p>
+            <p className="text-sm text-gray-500">Total Revenue</p>
+            <h2 className="text-lg md:text-xl font-bold">$12000</h2>
+            <p className="text-green-500 text-sm">+7.2%</p>
           </div>
-          <HiCurrencyDollar className="text-blue-500 text-3xl" />
+          <HiCurrencyDollar className="text-blue-500 text-2xl md:text-3xl" />
         </div>
 
-        <div className="bg-white p-4 rounded-xl shadow flex justify-between">
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow flex justify-between items-center">
           <div>
-            <p>Total Orders</p>
-            <h2 className="text-xl font-bold">700</h2>
-            <p className="text-green-500">+2.1%</p>
+            <p className="text-sm text-gray-500">Total Orders</p>
+            <h2 className="text-lg md:text-xl font-bold">700</h2>
+            <p className="text-green-500 text-sm">+2.1%</p>
           </div>
-          <HiShoppingBag className="text-purple-500 text-3xl" />
+          <HiShoppingBag className="text-purple-500 text-2xl md:text-3xl" />
         </div>
 
-        <div className="bg-white p-4 rounded-xl shadow flex justify-between">
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow flex justify-between items-center">
           <div>
-            <p>Total Products</p>
-            <h2 className="text-xl font-bold">250</h2>
-            <p>Active: 423</p>
+            <p className="text-sm text-gray-500">Total Products</p>
+            <h2 className="text-lg md:text-xl font-bold">250</h2>
+            <p className="text-sm">Active: 423</p>
           </div>
-          <HiCube className="text-green-500 text-3xl" />
+          <HiCube className="text-green-500 text-2xl md:text-3xl" />
         </div>
 
-        <div className="bg-white p-4 rounded-xl shadow flex justify-between">
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow flex justify-between items-center">
           <div>
-            <p>Total Customers</p>
-            <h2 className="text-xl font-bold">1100</h2>
-            <p className="text-green-500">+7.2%</p>
+            <p className="text-sm text-gray-500">Total Customers</p>
+            <h2 className="text-lg md:text-xl font-bold">1100</h2>
+            <p className="text-green-500 text-sm">+7.2%</p>
           </div>
-          <HiUsers className="text-orange-500 text-3xl" />
+          <HiUsers className="text-orange-500 text-2xl md:text-3xl" />
         </div>
 
       </div>
 
-      {/* 🔹 Charts Row */}
-      <div className="grid grid-cols-2 gap-6 mb-6">
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
 
-        {/* Revenue Line */}
-        <div className="bg-white p-4 rounded-xl shadow">
-          <h2 className="font-semibold mb-4">Revenue Trend</h2>
-          <LineChart width={350} height={300} data={revenueData}>
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow overflow-x-auto">
+          <h2 className="font-semibold mb-4 text-sm md:text-base">
+            Revenue Trend
+          </h2>
+
+          <LineChart width={500} height={300} data={revenueData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
@@ -105,10 +110,12 @@ export default function Analytics() {
           </LineChart>
         </div>
 
-        {/* Orders Bar */}
-        <div className="bg-white p-4 rounded-xl shadow">
-          <h2 className="font-semibold mb-4">Orders Trend</h2>
-          <BarChart width={350} height={300} data={ordersData}>
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow overflow-x-auto">
+          <h2 className="font-semibold mb-4 text-sm md:text-base">
+            Orders Trend
+          </h2>
+
+          <BarChart width={500} height={300} data={ordersData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
@@ -119,19 +126,16 @@ export default function Analytics() {
 
       </div>
 
-      {/* 🔹 Bottom Row */}
-      <div className="grid grid-cols-2 gap-6">
+      {/* Bottom Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
 
-        {/* Pie Chart */}
-        <div className="bg-white p-4 rounded-xl shadow">
-          <h2 className="font-semibold mb-4">Sales by Category</h2>
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow overflow-x-auto">
+          <h2 className="font-semibold mb-4 text-sm md:text-base">
+            Sales by Category
+          </h2>
+
           <PieChart width={300} height={250}>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              outerRadius={80}
-              label
-            >
+            <Pie data={pieData} dataKey="value" outerRadius={80} label>
               {pieData.map((entry, index) => (
                 <Cell key={index} fill={COLORS[index]} />
               ))}
@@ -139,50 +143,34 @@ export default function Analytics() {
           </PieChart>
         </div>
 
-        {/* Top Products */}
-        <div className="bg-white p-4 rounded-xl shadow">
-          <h2 className="font-semibold mb-4">Top Selling Products</h2>
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow">
+          <h2 className="font-semibold mb-4 text-sm md:text-base">
+            Top Selling Products
+          </h2>
 
-          <div className="space-y-4">
-            <div className="flex justify-between border-b pb-2">
-              <div>
-                <p>Formal T-Shirt</p>
-                <span className="text-sm text-gray-500">5678 units sold</span>
-              </div>
-              <p>$1000</p>
-            </div>
+          <div className="space-y-3 md:space-y-4">
 
-            <div className="flex justify-between border-b pb-2">
-              <div>
-                <p>Formal Pants</p>
-                <span className="text-sm text-gray-500">520 units sold</span>
-              </div>
-              <p>$4000</p>
-            </div>
+            {[
+              { name: "Formal T-Shirt", sold: "5678 units sold", price: "$1000" },
+              { name: "Formal Pants", sold: "520 units sold", price: "$4000" },
+              { name: "Summer Suits", sold: "400 units sold", price: "$3200" },
+              { name: "Lehanga", sold: "250 units sold", price: "$2500" },
+              { name: "Wood Land", sold: "300 units sold", price: "$5000" }
+            ].map((item, i) => (
+              <div key={i} className="flex justify-between border-b pb-2 last:border-none">
 
-            <div className="flex justify-between border-b pb-2">
-              <div>
-                <p>Summer Suits</p>
-                <span className="text-sm text-gray-500">400 units sold</span>
-              </div>
-              <p>$3200</p>
-            </div>
+                <div>
+                  <p className="text-sm md:text-base">{item.name}</p>
+                  <span className="text-xs md:text-sm text-gray-500">
+                    {item.sold}
+                  </span>
+                </div>
 
-            <div className="flex justify-between border-b pb-2">
-              <div>
-                <p>Lehanga</p>
-                <span className="text-sm text-gray-500">250 units sold</span>
-              </div>
-              <p>$2500</p>
-            </div>
+                <p className="text-sm md:text-base">{item.price}</p>
 
-            <div className="flex justify-between">
-              <div>
-                <p>Wood Land</p>
-                <span className="text-sm text-gray-500">300 units sold</span>
               </div>
-              <p>$5000</p>
-            </div>
+            ))}
+
           </div>
 
         </div>

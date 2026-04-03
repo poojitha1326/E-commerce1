@@ -53,65 +53,65 @@ export default function Stock() {
     }
   ];
 
-  // 🔢 Summary Counts
+  // Summary Counts
   const totalProducts = stockData.length;
   const inStock = stockData.filter(i => i.status === "in stock").length;
   const lowStock = stockData.filter(i => i.status === "low stock").length;
   const outStock = stockData.filter(i => i.status === "out of stock").length;
 
-  // 🔍 Filter
+  // Filter
   const filteredData = stockData.filter((item) =>
     item.name.toLowerCase().includes(search.toLowerCase()) &&
     (statusFilter === "" || item.status === statusFilter)
   );
 
   return (
-    <div>
+    <div className="p-4 md:p-6">
 
-      {/* 🔥 Title */}
-      <h1 className="text-2xl font-bold mb-1">Stock Management</h1>
-      <p className="text-gray-500 mb-6">
+      {/* Title */}
+      <h1 className="text-xl md:text-2xl font-bold mb-1">Stock Management</h1>
+      <p className="text-gray-500 text-sm md:text-base mb-6">
         Monitor and manage inventory levels
       </p>
 
-      {/* 📊 Summary Cards */}
-      <div className="grid grid-cols-4 gap-6 mb-6">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
-        <div className="bg-white p-4 rounded-xl shadow">
-          <p className="text-gray-500">Total Products</p>
-          <h2 className="text-xl font-bold">{totalProducts}</h2>
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow">
+          <p className="text-gray-500 text-sm">Total Products</p>
+          <h2 className="text-lg md:text-xl font-bold">{totalProducts}</h2>
         </div>
 
-        <div className="bg-white p-4 rounded-xl shadow">
-          <p className="text-gray-500">In Stock</p>
-          <h2 className="text-xl font-bold text-green-600">{inStock}</h2>
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow">
+          <p className="text-gray-500 text-sm">In Stock</p>
+          <h2 className="text-lg md:text-xl font-bold text-green-600">{inStock}</h2>
         </div>
 
-        <div className="bg-white p-4 rounded-xl shadow">
-          <p className="text-gray-500">Low Stock</p>
-          <h2 className="text-xl font-bold text-yellow-600">{lowStock}</h2>
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow">
+          <p className="text-gray-500 text-sm">Low Stock</p>
+          <h2 className="text-lg md:text-xl font-bold text-yellow-600">{lowStock}</h2>
         </div>
 
-        <div className="bg-white p-4 rounded-xl shadow">
-          <p className="text-gray-500">Out of Stock</p>
-          <h2 className="text-xl font-bold text-red-600">{outStock}</h2>
+        <div className="bg-white p-4 md:p-5 rounded-xl shadow">
+          <p className="text-gray-500 text-sm">Out of Stock</p>
+          <h2 className="text-lg md:text-xl font-bold text-red-600">{outStock}</h2>
         </div>
 
       </div>
 
-      {/* 🔍 Search + Filter */}
-      <div className="flex justify-between items-center mb-6 gap-4">
-        
+      {/* Search + Filter */}
+      <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
+
         <input
           type="text"
           placeholder="Search products..."
-          className="w-full p-3 border rounded-xl shadow-sm"
+          className="w-full md:flex-1 p-2 md:p-3 border rounded-xl shadow-sm text-sm md:text-base"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
 
         <select
-          className="p-3 border rounded-xl"
+          className="w-full md:w-52 p-2 md:p-3 border rounded-xl text-sm md:text-base"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
@@ -120,21 +120,22 @@ export default function Stock() {
           <option value="low stock">Low Stock</option>
           <option value="out of stock">Out of Stock</option>
         </select>
+
       </div>
 
-      {/* 📋 Table */}
+      {/* Table */}
       <div className="bg-white rounded-xl shadow overflow-x-auto">
-        <table className="w-full text-left">
+        <table className="w-full text-sm md:text-base">
 
-          <thead className="bg-gray-100">
+          <thead className="bg-gray-100 text-xs md:text-sm">
             <tr>
-              <th className="p-4">Product</th>
+              <th className="p-3 md:p-4">Product</th>
               <th>Category</th>
-              <th>Current Stock</th>
-              <th>Min Stock</th>
-              <th>Max Stock</th>
+              <th>Current</th>
+              <th>Min</th>
+              <th>Max</th>
               <th>Status</th>
-              <th>Last Restocked</th>
+              <th>Date</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -143,7 +144,7 @@ export default function Stock() {
             {filteredData.map((item, i) => (
               <tr key={i} className="border-t hover:bg-gray-50">
 
-                <td className="p-4 font-medium">{item.name}</td>
+                <td className="p-3 md:p-4 font-medium">{item.name}</td>
                 <td>{item.category}</td>
 
                 <td
@@ -163,7 +164,7 @@ export default function Stock() {
 
                 <td>
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    className={`text-xs md:text-sm px-3 py-1 rounded-full ${
                       item.status === "in stock"
                         ? "bg-green-100 text-green-600"
                         : item.status === "low stock"
@@ -178,9 +179,9 @@ export default function Stock() {
                 <td>{item.date}</td>
 
                 <td>
-                  <button className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700">
+                  <button className="flex items-center gap-1 md:gap-2 bg-blue-600 text-white px-2 md:px-3 py-1 md:py-2 rounded-lg text-xs md:text-sm hover:bg-blue-700">
                     <HiRefresh />
-                    Restock
+                    <span className="hidden sm:inline">Restock</span>
                   </button>
                 </td>
 

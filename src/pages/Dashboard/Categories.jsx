@@ -31,66 +31,74 @@ export default function Categories() {
   ];
 
   return (
-    <div>
+    <div className="p-4 md:p-6">
 
-      {/* 🔥 Header */}
-      <h1 className="text-2xl font-bold mb-1">
+      {/* Header */}
+      <h1 className="text-xl md:text-2xl font-bold mb-1">
         Category Management
       </h1>
-      <p className="text-gray-500 mb-6">
+
+      <p className="text-gray-500 text-sm md:text-base mb-6">
         Organize your product catalog
       </p>
 
-      {/* 📦 Container */}
-      <div className="bg-white p-6 rounded-xl shadow">
+      {/* Container */}
+      <div className="bg-white p-4 md:p-6 rounded-xl shadow">
 
         {/* Top Bar */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-blue-600 font-semibold text-lg">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+
+          <h2 className="text-blue-600 font-semibold text-base md:text-lg">
             Categories ({categories.length})
           </h2>
 
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm md:text-base hover:bg-blue-700 transition w-full md:w-auto">
             <HiPlus />
             Add Category
           </button>
+
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
 
           {categories.map((cat, i) => (
             <div
               key={i}
-              className="border rounded-xl p-4 hover:shadow-md transition"
+              className="border rounded-xl p-4 md:p-5 hover:shadow-md transition"
             >
 
               {/* Top Row */}
-              <div className="flex justify-between items-start">
+              <div className="flex justify-between items-start gap-3">
 
-                <div className="flex items-center gap-3">
-                  <div className="bg-blue-100 p-3 rounded-lg">
-                    <HiTag className="text-blue-600 text-xl" />
+                <div className="flex items-start gap-3">
+
+                  <div className="bg-blue-100 p-2 md:p-3 rounded-lg">
+                    <HiTag className="text-blue-600 text-lg md:text-xl" />
                   </div>
 
                   <div>
-                    <h3 className="font-semibold">{cat.name}</h3>
-                    <p className="text-gray-500 text-sm">
+                    <h3 className="font-semibold text-sm md:text-base">
+                      {cat.name}
+                    </h3>
+
+                    <p className="text-gray-500 text-xs md:text-sm">
                       {cat.count} products
                     </p>
                   </div>
+
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3">
-                  <HiPencil className="text-blue-500 cursor-pointer hover:scale-110" />
-                  <HiTrash className="text-red-500 cursor-pointer hover:scale-110" />
+                <div className="flex gap-2 md:gap-3">
+                  <HiPencil className="text-blue-500 cursor-pointer hover:scale-110 transition text-sm md:text-base" />
+                  <HiTrash className="text-red-500 cursor-pointer hover:scale-110 transition text-sm md:text-base" />
                 </div>
 
               </div>
 
               {/* Description */}
-              <p className="text-gray-500 mt-4 text-sm">
+              <p className="text-gray-500 mt-3 md:mt-4 text-xs md:text-sm">
                 {cat.desc}
               </p>
 
@@ -98,6 +106,7 @@ export default function Categories() {
           ))}
 
         </div>
+
       </div>
 
     </div>
