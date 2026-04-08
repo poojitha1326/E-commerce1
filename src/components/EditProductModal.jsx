@@ -1,11 +1,49 @@
 import { useState } from "react";
 import { HiX } from "react-icons/hi";
+import axios from "axios"; // ✅ ADDED
 
 export default function EditProductModal({ product, onClose }) {
   const [form, setForm] = useState(product);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // ✅ ✅ MAIN ADDITION (THIS IS WHERE YOUR JSON GOES)
+  const handleSubmit = async () => {
+    try {
+      // 👉 THIS IS YOUR JSON CONVERTED INTO CODE
+      const payload = {
+        name: form.name,
+        category: form.category,
+        price: Number(form.price),
+        description: form.description || ""
+      };
+
+      console.log("Payload:", payload); // debug
+
+      const token = localStorage.getItem("token"); // optional
+
+      // 👉 API CALL (EDIT PRODUCT)
+      const res = await axios.put(
+        `http://localhost:5000/api/products/${form.id}`, // make sure id exists
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      console.log("Updated:", res.data);
+
+      alert("Product updated ✅");
+      onClose();
+
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Update failed ❌");
+    }
   };
 
   return (
@@ -115,6 +153,17 @@ export default function EditProductModal({ product, onClose }) {
           />
         </div>
 
+        {/* ✅ ADDED DESCRIPTION (REQUIRED FOR BACKEND) */}
+        <div className="mt-4">
+          <label className="text-sm">Description</label>
+          <textarea
+            name="description"
+            value={form.description || ""}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+          />
+        </div>
+
         {/* Upload */}
         <div className="mt-4 border-2 border-dashed p-6 text-center rounded">
           <p className="text-gray-500">
@@ -142,7 +191,11 @@ export default function EditProductModal({ product, onClose }) {
             Cancel
           </button>
 
-          <button className="px-4 py-2 bg-blue-600 text-white rounded">
+          {/* ✅ CONNECTED BUTTON */}
+          <button
+            onClick={handleSubmit}
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+          >
             Save Product
           </button>
         </div>

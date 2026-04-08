@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -10,25 +11,23 @@ export default function Login() {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
+            // Handle input change
   const handleChange = (e) => {
-    let { name, value } = e.target;
-
-    if (/^\d*$/.test(value)) {
-      if (value.length <= 10) {
-        setLoginData({ ...loginData, [name]: value });
-      }
-    } else {
-      setLoginData({ ...loginData, [name]: value });
-    }
+    const { name, value } = e.target;
+    setLoginData({ ...loginData, [name]: value });
   };
 
+  // Validation
   const validate = () => {
     let newErrors = {};
 
+    // credentials format validation
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isMobile = /^[0-9]{10}$/;
 
+     // username validation
     if (!loginData.username) {
       newErrors.username = "Email or Mobile is required";
     } else if (
@@ -48,12 +47,53 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // ✅ FIXED LOGIN
-  const handleLogin = () => {
+  // Login function
+  const handleLogin = async () => {
     if (!validate()) return;
 
-    // 🚀 Direct redirect
-    navigate("/dashboard/analytics");
+    setLoading(true);
+
+    try {
+
+      // Create payload for backend
+      const payload = {
+        mobile: loginData.username,          // backend email
+        password: loginData.password
+      };
+
+      // API call to backend
+
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      console.log("Login Success:", res.data);
+    
+      // store token 
+      const token = res.data?.token;
+
+      if (token) {
+        localStorage.setItem("token", token);
+      }
+
+      navigate("/dashboard/analytics");
+
+    } catch (error) {
+      console.error("Login Error:", error);
+
+      const message =
+        error.response?.data?.message || "Login Failed. Try again.";
+
+      alert(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,6 +104,7 @@ export default function Login() {
           Login Form
         </h2>
 
+        {/* Username */}
         <input
           type="text"
           name="username"
@@ -76,25 +117,28 @@ export default function Login() {
           <p className="text-red-500 text-sm">{errors.username}</p>
         )}
 
+        {/* Password */}
         <input
           type="password"
           name="password"
           placeholder="Password"
           value={loginData.password}
-          onChange={(e) =>
-            setLoginData({ ...loginData, password: e.target.value })
-          }
+          onChange={handleChange}
           className="w-full mt-3 mb-2 px-3 py-2 border rounded-lg"
         />
         {errors.password && (
           <p className="text-red-500 text-sm">{errors.password}</p>
         )}
 
+        {/* Button */}
         <button
           onClick={handleLogin}
-          className="w-full bg-blue-900 text-white py-2 rounded-lg mt-3"
+          disabled={loading}
+          className={`w-full py-2 rounded-lg mt-3 text-white ${
+            loading ? "bg-gray-400" : "bg-blue-900"
+          }`}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
 
       </div>

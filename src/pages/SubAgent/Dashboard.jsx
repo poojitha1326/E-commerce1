@@ -20,6 +20,15 @@ export default function SubDashboard() {
           <div key={i} className="bg-white p-4 rounded-xl shadow">
             <p className="text-gray-500 text-sm">{item.title}</p>
             <h2 className="text-lg md:text-xl font-bold">{item.value}</h2>
+            <div
+            onClick={() => {
+              localStorage.setItem("role", "admin"); // important for routing
+              navigate("/dashboard");
+            }}
+            className="flex items-center gap-3 p-3 rounded-lg cursor-pointer text-gray-300 hover:bg-gray-800"
+           >
+
+          </div>
           </div>
         ))}
 

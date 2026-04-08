@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { HiPencil, HiTrash } from "react-icons/hi";
 import EditProductModal from "../../components/EditProductModal";
+import { useNavigate } from "react-router-dom";
 
 export default function Products() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const navigate = useNavigate();
 
   const products = [
     {
@@ -59,7 +61,10 @@ export default function Products() {
       <div className="flex flex-col md:flex-row gap-3 md:justify-between md:items-center mb-4">
         <h1 className="text-lg md:text-2xl font-bold">Products</h1>
 
-        <button className="w-full md:w-auto text-sm md:text-base bg-blue-600 text-white px-3 py-2 rounded-lg">
+        <button
+          onClick={() => navigate("/subagent/upload")}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+       >
           + Add Product
         </button>
       </div>

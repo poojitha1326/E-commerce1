@@ -1,16 +1,17 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-import DashboardLayout from "./layouts/DashboardLayout";
 import SubAgentLayout from "./layouts/SubAgentLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
 
-// ✅ Admin Pages (UNCHANGED)
+// Admin Pages //
+import Login from "./pages/Auth/Login";
 import Analytics from "./pages/Dashboard/Analytics";
 import Products from "./pages/Dashboard/Products";
 import Stock from "./pages/Dashboard/Stocks";
 import Categories from "./pages/Dashboard/Categories";
 import Users from "./pages/Dashboard/Users";
 
-// ✅ SubAgent Pages
+// SubAgent Pages //
 import SubDashboard from "./pages/SubAgent/Dashboard";
 import Upload from "./pages/SubAgent/Upload";
 import ViewProducts from "./pages/SubAgent/ViewProducts";
@@ -23,8 +24,10 @@ function App() {
   return (
     <Router>
       <Routes>
-
-        {/* ================= ADMIN ROUTES (NO CHANGE) ================= */}
+                 {/* LOGIN Page*/}
+          <Route path ="/login" element={<Login />} />
+         
+        {/* ================= ADMIN ROUTES ================= */}
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<Analytics />} />
           <Route path="analytics" element={<Analytics />} />
@@ -32,11 +35,12 @@ function App() {
           <Route path="stocks" element={<Stock />} />
           <Route path="categories" element={<Categories />} />
           <Route path="users" element={<Users />} />
+          <Route path="upload" element={<Upload />} />
         </Route>
 
         {/* ================= SUB AGENT ROUTES ================= */}
         <Route path="/subagent" element={<SubAgentLayout />}>
-          <Route index element={<SubDashboard />} />
+          <Route index element={<SubDashboard />} />    // default
           <Route path="upload" element={<Upload />} />
           <Route path="products" element={<ViewProducts />} />
           <Route path="wallet" element={<Wallet />} />
@@ -48,8 +52,10 @@ function App() {
           path="/"
           element={
             role === "admin"
-              ? <Navigate to="/dashboard" />
-              : <Navigate to="/subagent" />
+                ? <Navigate to="/dashboard" />
+              : role === "subagent"
+              ? <Navigate to="/subagent" />
+              : <Navigate to="/login" />
           }
         />
 
