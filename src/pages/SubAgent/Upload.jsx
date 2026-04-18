@@ -8,7 +8,7 @@ export default function Upload() {
     category: "",
     description: "",
     price: "",
-    images: [],
+    images: "",
     previews: [],
   });
 
@@ -104,9 +104,9 @@ export default function Upload() {
       formData.append("price", Number(form.price));
       formData.append("description", form.description);
 
-      form.images.forEach((img) => {
-        formData.append("images", img);
-      });
+      if (form.images && form.images.length > 0) {
+  formData.append("image", form.images[0]);  // MUST be "image"
+}
 
       const token = localStorage.getItem("token");
 
