@@ -13,13 +13,12 @@ import {
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
-   
   const navigate = useNavigate();
 
-const handleLogout = () => {
-  localStorage.clear();
-  navigate("/login");
-};
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   const navClass = ({ isActive }) =>
     `flex items-center gap-3 p-3 rounded-lg transition ${
@@ -43,10 +42,9 @@ const handleLogout = () => {
           className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden"
           onClick={() => setOpen(false)}
         >
-          {/* Sidebar Panel */}
           <div
             className="w-64 max-w-[80%] bg-black text-white h-full p-4"
-            onClick={(e) => e.stopPropagation()} // prevent close on inside click
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
@@ -76,10 +74,16 @@ const handleLogout = () => {
                 <HiUsers /> Users
               </NavLink>
 
+              {/* ✅ FIXED LOGOUT */}
               <button
-                onClick={handleLogout}
+                onClick={() => {
+                  handleLogout();
+                  setOpen(false);
+                }}
+                className="flex items-center gap-3 p-3 rounded-lg transition text-gray-300 hover:bg-gray-800 w-full text-left"
               >
-                <HiLogout /> Logout
+                <HiLogout />
+                Logout
               </button>
             </nav>
           </div>
@@ -111,16 +115,18 @@ const handleLogout = () => {
             <HiUsers /> Users
           </NavLink>
 
-           <button
+          {/* ✅ FIXED LOGOUT */}
+          <button
             onClick={handleLogout}
-            className="flex items-center gap-3 p-3 rounded-lg text-white-400 hover:bg-gray-600 hover:text-white w-full"
+            className="flex items-center gap-3 p-3 rounded-lg transition text-gray-300 hover:bg-gray-800 w-full text-left"
           >
-            <HiLogout /> Logout
+            <HiLogout />
+            Logout
           </button>
         </nav>
       </div>
 
-      {/* ---------MAIN CONTENT-------------*/}
+      {/* ================= MAIN CONTENT ================= */}
       <div className="flex-1 p-4 md:p-6 mt-16 md:mt-0">
         <Outlet />
       </div>

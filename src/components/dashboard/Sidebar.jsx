@@ -14,7 +14,7 @@ export default function Sidebar({ open, setOpen }) {
 
   return (
     <>
-      {/* ✅ Overlay (Mobile only background) */}
+      {/* Overlay (Mobile only background) */}
       {open && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
@@ -22,7 +22,7 @@ export default function Sidebar({ open, setOpen }) {
         />
       )}
 
-      {/* ✅ Sidebar */}
+      {/* Sidebar */}
       <div
         className={`
           bg-gray-900 text-white p-5

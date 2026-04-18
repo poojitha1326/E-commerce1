@@ -1,40 +1,41 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
 
   const [loginData, setLoginData] = useState({
-    username: "",
+    mobile: "",
     password: ""
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-            // Handle input change
+  // 🔥 AUTO REDIRECT IF ALREADY LOGGED IN
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard/analytics");
+    }
+  }, []);
+
+  // HANDLE INPUT
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLoginData({ ...loginData, [name]: value });
   };
 
-  // Validation
+  // VALIDATION
   const validate = () => {
     let newErrors = {};
-
-    // credentials format validation
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isMobile = /^[0-9]{10}$/;
 
-     // username validation
-    if (!loginData.username) {
-      newErrors.username = "Email or Mobile is required";
-    } else if (
-      !isEmail.test(loginData.username) &&
-      !isMobile.test(loginData.username)
-    ) {
-      newErrors.username = "Enter valid Email or Mobile";
+    if (!loginData.mobile) {
+      newErrors.mobile = "Mobile is required";
+    } else if (!isMobile.test(loginData.mobile)) {
+      newErrors.mobile = "Enter valid 10-digit Mobile number";
     }
 
     if (!loginData.password) {
@@ -47,42 +48,45 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Login function
+  // LOGIN FUNCTION
   const handleLogin = async () => {
     if (!validate()) return;
 
     setLoading(true);
 
     try {
-
-      // Create payload for backend
-      const payload = {
-        mobile: loginData.username,          // backend email
-        password: loginData.password
-      };
-
-      // API call to backend
-
       const res = await axios.post(
         "http://localhost:5000/api/auth/login",
-        payload,
         {
-          headers: {
-            "Content-Type": "application/json"
-          }
+          mobile: loginData.mobile,
+          password: loginData.password
         }
       );
 
       console.log("Login Success:", res.data);
-    
-      // store token 
-      const token = res.data?.token;
+
+      const token = res.data?.token || res.data?.data?.token;
+      const user = res.data?.user || res.data?.data?.user;
 
       if (token) {
+        //  STORE TOKEN
         localStorage.setItem("token", token);
-      }
 
-      navigate("/dashboard/analytics");
+        //  STORE ROLE (IMPORTANT)
+        if (user?.role) {
+          localStorage.setItem("role", user.role);
+        }
+
+        //  NAVIGATION BASED ON ROLE
+        if (user?.role === "subagent") {
+          navigate("/subagent");
+        } else {
+          navigate("/dashboard/analytics");
+        }
+
+      } else {
+        setErrors({ api: "Login Failed" });
+      }
 
     } catch (error) {
       console.error("Login Error:", error);
@@ -90,7 +94,7 @@ export default function Login() {
       const message =
         error.response?.data?.message || "Login Failed. Try again.";
 
-      alert(message);
+      setErrors({ api: message });
     } finally {
       setLoading(false);
     }
@@ -104,20 +108,20 @@ export default function Login() {
           Login Form
         </h2>
 
-        {/* Username */}
+        {/* MOBILE */}
         <input
           type="text"
-          name="username"
-          placeholder="Email or Mobile"
-          value={loginData.username}
+          name="mobile"
+          placeholder="Mobile Number"
+          value={loginData.mobile}
           onChange={handleChange}
           className="w-full mb-2 px-3 py-2 border rounded-lg"
         />
-        {errors.username && (
-          <p className="text-red-500 text-sm">{errors.username}</p>
+        {errors.mobile && (
+          <p className="text-red-500 text-sm">{errors.mobile}</p>
         )}
 
-        {/* Password */}
+        {/* PASSWORD */}
         <input
           type="password"
           name="password"
@@ -130,7 +134,12 @@ export default function Login() {
           <p className="text-red-500 text-sm">{errors.password}</p>
         )}
 
-        {/* Button */}
+        {/* API ERROR */}
+        {errors.api && (
+          <p className="text-red-500 text-sm text-center">{errors.api}</p>
+        )}
+
+        {/* BUTTON */}
         <button
           onClick={handleLogin}
           disabled={loading}

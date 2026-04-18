@@ -35,7 +35,7 @@ export default function Profile() {
     console.log("Updated User:", user);
     console.log("Password Data:", passwords);
 
-    alert("Profile Updated Successfully ✅");
+    alert("Profile Updated Successfully");
 
     setEdit(false);
   };

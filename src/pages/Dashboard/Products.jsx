@@ -1,144 +1,209 @@
 import { useState } from "react";
-import { HiPencil, HiTrash } from "react-icons/hi";
-import EditProductModal from "../../components/EditProductModal";
 import { useNavigate } from "react-router-dom";
 
-export default function Products() {
-  const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const navigate = useNavigate();
-
-  const products = [
-    {
-      name: "Formal T-Shirt",
-      category: "T-Shirts",
-      brand: "Nike",
-      price: "25",
-      discount: "10",
-      stock: 120,
-      status: "Active"
-    },
-    {
-      name: "Formal Pants",
-      category: "Pants",
-      brand: "Levis",
-      price: "60",
-      discount: "15",
-      stock: 80,
-      status: "InActive"
-    },
-    {
-      name: "Summer Suits",
-      category: "Dresses",
-      brand: "Zara",
-      price: "45",
-      discount: "5",
-      stock: 50,
-      status: "Low Stock"
-    },
-    {
-      name: "Wood Land",
-      category: "Slippers",
-      brand: "Puma",
-      price: "120",
-      discount: "20",
-      stock: 20,
-      status: "Out of Stock"
+export default function AddProduct() {
+   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    category: "",
+    price: "",
+    images: "",
+    address: {
+      locality: "",
+      village: "",
+      city: "",
+      state: "",
+      pincode: "",
+      latitude: "",
+      longitude: "",
+      project_name: ""
     }
-  ];
+  });
 
-  const filteredProducts = products.filter(
-    (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) &&
-      (categoryFilter === "" || p.category === categoryFilter)
-  );
+  const [errors, setErrors] = useState({});
+
+  // HANDLE INPUT
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name in formData.address) {
+      setFormData({
+        ...formData,
+        address: {
+          ...formData.address,
+          [name]: value
+        }
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  // VALIDATION FUNCTION
+  const validate = () => {
+    let newErrors = {};
+
+    if (!formData.name) newErrors.name = "Name is required";
+    if (!formData.description) newErrors.description = "Description required";
+    if (!formData.category) newErrors.category = "Category required";
+    if (!formData.price || formData.price <= 0)
+      newErrors.price = "Valid price required";
+
+    if (!formData.images)
+      newErrors.images = "At least one image URL required";
+
+    // Address validation
+    if (!formData.address.city) newErrors.city = "City required";
+    if (!formData.address.state) newErrors.state = "State required";
+    if (!formData.address.pincode)
+      newErrors.pincode = "Pincode required";
+
+    return newErrors;
+  };
+
+  // 🔹 SUBMIT
+  const handleSubmit = async () => {
+    const validationErrors = validate();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const payload = {
+        ...formData,
+        images: formData.images.split(",") // convert to array
+      };
+
+      const res = await fetch(
+        "http://localhost:5000/api/products/add_product",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token
+          },
+          body: JSON.stringify(payload)
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.status) {
+        alert("Product Added");
+      } else {
+        alert(data.message);
+      }
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
-    <div className="p-3 md:p-6">
+    <div className="p-6 bg-gray-100 min-h-screen">
 
-      {/* Header */}
-      <div className="flex flex-col md:flex-row gap-3 md:justify-between md:items-center mb-4">
-        <h1 className="text-lg md:text-2xl font-bold">Products</h1>
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Add Product</h1>
 
+        {/* + Add PRODUCT BUTTON */}
         <button
           onClick={() => navigate("/subagent/upload")}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-       >
-          + Add Product
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        >
+          + Add Products
         </button>
       </div>
 
-      {/* Search */}
-      <input
-        type="text"
-        placeholder="Search..."
-        className="w-full mb-3 p-2 text-sm border rounded-lg"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+      {/* FORM CARD */}
+      <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-md">
 
-      {/* Table */}
-      <div className="bg-white rounded-xl shadow overflow-x-auto">
-        <table className="w-full text-xs md:text-base">
-
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2">Product</th>
-              <th className="p-2">
-                <select
-                  className="text-xs border rounded px-1 py-1"
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                >
-                  <option value="">All</option>
-                  <option value="T-Shirts">T-Shirts</option>
-                  <option value="Jeans">Jeans</option>
-                  <option value="Dresses">Dresses</option>
-                </select>
-              </th>
-              <th>Brand</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredProducts.map((p, i) => (
-              <tr key={i} className="border-t">
-
-                <td className="p-2">{p.name}</td>
-                <td>{p.category}</td>
-                <td>{p.brand}</td>
-                <td>${p.price}</td>
-                <td>{p.stock}</td>
-
-                <td>
-                  <span className="text-xs px-2 py-1 rounded bg-green-100 text-green-600">
-                    {p.status}
-                  </span>
-                </td>
-
-                <td className="flex gap-2">
-                  <HiPencil onClick={() => setSelectedProduct(p)} />
-                  <HiTrash />
-                </td>
-
-              </tr>
-            ))}
-          </tbody>
-
-        </table>
-      </div>
-
-      {selectedProduct && (
-        <EditProductModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
+        {/* NAME */}
+        <input
+          name="name"
+          placeholder="Name"
+          onChange={handleChange}
+          className="w-full p-3 border rounded-lg mb-2"
         />
-      )}
+        <p className="text-red-500 text-xs mb-2">{errors.name}</p>
+
+      {/* DESCRIPTION */}
+        <input
+          name="description"
+          placeholder="Description"
+          onChange={handleChange}
+          className="w-full p-3 border rounded-lg mb-2"
+        />
+        <p className="text-red-500 text-xs mb-2">{errors.description}</p>
+
+        {/* CATEGORY */}
+        <input
+          name="category"
+          placeholder="Category"
+          onChange={handleChange}
+          className="w-full p-3 border rounded-lg mb-2"
+        />
+        <p className="text-red-500 text-xs mb-2">{errors.category}</p>
+
+        {/* PRICE */}
+        <input
+          name="price"
+          type="number"
+          placeholder="Price"
+          onChange={handleChange}
+          className="w-full p-3 border rounded-lg mb-2"
+        />
+        <p className="text-red-500 text-xs mb-2">{errors.price}</p>
+
+        {/* IMAGES */}
+        <input
+          name="images"
+          placeholder="Image URLs (comma separated)"
+          onChange={handleChange}
+          className="w-full p-3 border rounded-lg mb-4"
+        />
+        <p className="text-red-500 text-xs mb-2">{errors.images}</p>
+
+        {/* ADDRESS */}
+        <h3 className="text-lg font-semibold mb-3">Address</h3>
+
+        <div className="grid grid-cols-2 gap-3">
+          <input name="locality" placeholder="Locality" onChange={handleChange} className="p-3 border rounded-lg" />
+          <p className="text-red-500 text-xs mb-2">{errors.locality}</p>
+          <input name="village" placeholder="Village" onChange={handleChange} className="p-3 border rounded-lg" />
+          <p className="text-red-500 text-xs mb-2">{errors.village}</p>
+        </div>
+
+        <input name="city" placeholder="City" onChange={handleChange} className="w-full p-3 border rounded-lg mt-3" />
+        <p className="text-red-500 text-xs mb-2">{errors.city}</p>
+
+        <input name="state" placeholder="State" onChange={handleChange} className="w-full p-3 border rounded-lg mb-2" />
+        <p className="text-red-500 text-xs mb-2">{errors.state}</p>
+
+        <input name="pincode" placeholder="Pincode" onChange={handleChange} className="w-full p-3 border rounded-lg mb-2" />
+        <p className="text-red-500 text-xs mb-2">{errors.pincode}</p>
+
+        <div className="grid grid-cols-2 gap-3">
+          <input name="latitude" placeholder="Latitude" onChange={handleChange} className="p-3 border rounded-lg" />
+          <input name="longitude" placeholder="Longitude" onChange={handleChange} className="p-3 border rounded-lg" />
+        </div>
+
+        <input name="project_name" placeholder="Project Name" onChange={handleChange} className="w-full p-3 border rounded-lg mt-3" />
+
+        {/* SUBMIT */}
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-blue-600 text-white py-3 mt-5 rounded-lg hover:bg-blue-700"
+        >
+          Submit
+        </button>
+
+      </div>
     </div>
   );
 }

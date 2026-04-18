@@ -8,110 +8,152 @@ export default function Upload() {
     category: "",
     description: "",
     price: "",
-    image: null,
-    preview: ""
+    images: [],
+    previews: [],
   });
 
-     // Handle input //
+  const [loading, setLoading] = useState(false);
+  const [compressing, setCompressing] = useState(false);
+
+  // HANDLE INPUT
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-      
-         // Upload image 
 
-  const handleImageChange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-         // Allow only images 
-
-  if (!file.type.startsWith("image/")) {
-    alert("Only images allowed ❌");
-    return;
-  }
-
-  try {
+  // COMPRESS IMAGE (~50KB)
+  const compressToTarget = async (file) => {
     const options = {
-      maxSizeMB: 0.05, // 50KB
-      maxWidthOrHeight: 800,
+      maxSizeMB: 0.05,
+      maxWidthOrHeight: 1024,
       useWebWorker: true,
     };
+    return await imageCompression(file, options);
+  };
 
-    const compressedFile = await imageCompression(file, options);
+  // HANDLE IMAGE SELECT
+  const handleImageChange = async (e) => {
+    const files = Array.from(e.target.files);
 
-    console.log("Original:", file.size / 1024, "KB");
-    console.log("Compressed:", compressedFile.size / 1024, "KB");
+    if (files.length > 5) {
+      alert("Max 5 images allowed");
+      return;
+    }
 
-    const previewURL = URL.createObjectURL(compressedFile);
+    setCompressing(true);
 
-     // correct state update
+    try {
+      const results = await Promise.all(
+        files.map(async (file) => {
+          console.log("Original:", file.name, (file.size / 1024).toFixed(1), "KB");
+
+          const compressed = await compressToTarget(file);
+
+          console.log("Compressed:", (compressed.size / 1024).toFixed(1), "KB");
+
+          return {
+            file: compressed,
+            preview: URL.createObjectURL(compressed),
+          };
+        })
+      );
+
+      setForm((prev) => ({
+        ...prev,
+        images: [...prev.images, ...results.map((r) => r.file)],
+        previews: [...prev.previews, ...results.map((r) => r.preview)],
+      }));
+
+    } catch (err) {
+      console.error(err);
+      alert("Image processing failed");
+    } finally {
+      setCompressing(false);
+    }
+  };
+
+  // REMOVE IMAGE
+  const handleRemoveImage = (index) => {
+    URL.revokeObjectURL(form.previews[index]);
 
     setForm((prev) => ({
-       ...prev,
-      image: compressedFile,
-      preview: previewURL
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+      previews: prev.previews.filter((_, i) => i !== index),
     }));
+  };
 
-  } catch (error) {
-    console.error("Compression error:", error);
-  }
-};
+  // SUBMIT API CALL
+  const handleSubmit = async () => {
+    if (!form.name || !form.category || !form.price) {
+      alert("Please fill required fields");
+      return;
+    }
 
-       // API CALL
-
-       const handleSubmit = async () => {
-    if (!form.image) {
-      alert("Please select image ❌");
+    if (form.images.length === 0) {
+      alert("Please select at least one image");
       return;
     }
 
     try {
+      setLoading(true);
+
       const formData = new FormData();
 
       formData.append("name", form.name);
       formData.append("category", form.category);
-      formData.append("price", form.price);
+      formData.append("price", Number(form.price));
       formData.append("description", form.description);
-      formData.append("image", form.image);
+
+      form.images.forEach((img) => {
+        formData.append("images", img);
+      });
+
+      const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        "http://localhost:5000/api/products", 
+        "http://localhost:5000/api/products/add_product",
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
-          },
+            Authorization: "Bearer " + token
+          }
         }
       );
 
-      console.log(res.data);
-      alert("Product uploaded successfully");
+      console.log("Response:", res.data);
 
-      // Reset form
-      setForm({
-        name: "",
-        category: "",
-        description: "",
-        price: "",
-        image: null,
-        preview: ""
-      });
+      if (res.data.status) {
+        alert("Product Uploaded Successfully");
+
+        setForm({
+          name: "",
+          category: "",
+          description: "",
+          price: "",
+          images: [],
+          previews: [],
+        });
+      } else {
+        alert(res.data.message);
+      }
 
     } catch (err) {
       console.error(err);
-      alert("Upload failed ❌");
+      alert("Upload failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="p-4 md:p-6">
-
       <h1 className="text-xl md:text-2xl font-bold mb-6">
         Upload Product
       </h1>
 
       <div className="bg-white p-4 md:p-6 rounded-xl shadow space-y-4">
 
+        {/* NAME */}
         <input
           name="name"
           placeholder="Product Name"
@@ -120,6 +162,7 @@ export default function Upload() {
           onChange={handleChange}
         />
 
+        {/* CATEGORY */}
         <select
           name="category"
           className="w-full border p-3 rounded"
@@ -131,10 +174,9 @@ export default function Upload() {
           <option>Real Estate</option>
           <option>Home Loans</option>
           <option>Insurance</option>
-          <option>Electric Vehicles</option>
-          <option>Commodities</option>
         </select>
 
+        {/* PRICE */}
         <input
           name="price"
           placeholder="Price"
@@ -143,6 +185,7 @@ export default function Upload() {
           onChange={handleChange}
         />
 
+        {/* DESCRIPTION */}
         <textarea
           name="description"
           placeholder="Description"
@@ -150,29 +193,58 @@ export default function Upload() {
           value={form.description}
           onChange={handleChange}
         />
-        
+
+        {/* FILE INPUT */}
         <input
           type="file"
-          accept="image/png, image/jpeg"
-          className="w-full"
+          multiple
+          accept="image/*"
           onChange={handleImageChange}
+          disabled={compressing}
         />
-        
-        {/* preview image */}
 
-        {form.preview && (
-      <img
-         src={form.preview}
-         alt="preview"
-         className="w-40 h-40 object-cover rounded"
-         />
+        {compressing && (
+          <p className="text-blue-500 text-sm animate-pulse">
+            Compressing images...
+          </p>
         )}
 
+        {/* IMAGE PREVIEW + SIZE */}
+        <div className="flex gap-3 flex-wrap">
+          {form.previews.map((img, index) => (
+            <div key={index} className="relative flex flex-col items-center">
+
+              {/* IMAGE */}
+              <img
+                src={img}
+                alt="preview"
+                className="w-24 h-24 object-cover rounded"
+              />
+
+              {/* REMOVE BUTTON */}
+              <button
+                onClick={() => handleRemoveImage(index)}
+                className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+              >
+                ✕
+              </button>
+
+              {/* FILE SIZE */}
+              <p className="text-xs text-gray-500 mt-1 text-center">
+                {(form.images[index]?.size / 1024).toFixed(1)} KB
+              </p>
+
+            </div>
+          ))}
+        </div>
+
+        {/* SUBMIT */}
         <button
           onClick={handleSubmit}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+          disabled={loading || compressing}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg disabled:opacity-50"
         >
-          Submit Product
+          {loading ? "Uploading..." : "Submit"}
         </button>
 
       </div>

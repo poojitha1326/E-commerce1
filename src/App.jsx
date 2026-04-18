@@ -40,7 +40,7 @@ function App() {
 
         {/* ================= SUB AGENT ROUTES ================= */}
         <Route path="/subagent" element={<SubAgentLayout />}>
-          <Route index element={<SubDashboard />} />    // default
+          <Route index element={<SubDashboard />} />   
           <Route path="upload" element={<Upload />} />
           <Route path="products" element={<ViewProducts />} />
           <Route path="wallet" element={<Wallet />} />
@@ -48,7 +48,7 @@ function App() {
         </Route>
 
         {/* ================= DEFAULT REDIRECT ================= */}
-        <Route
+      <Route
           path="/"
           element={
             role === "admin"
@@ -58,6 +58,7 @@ function App() {
               : <Navigate to="/login" />
           }
         />
+
 
       </Routes>
     </Router>
